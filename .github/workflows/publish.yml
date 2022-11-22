@@ -17,7 +17,7 @@ jobs:
       - name: install curl and other non r dependencies
         run: |
           sudo apt update
-          sudo apt install libcurl4-openssl-dev libudunits2-dev libgdal-dev libgeos-dev libproj-dev
+          sudo apt install libcurl4-openssl-dev libudunits2-dev
       - name: setup R
         uses: r-lib/actions/setup-r@v2
         with:
@@ -28,9 +28,18 @@ jobs:
         uses: r-lib/actions/setup-renv@v2
         with:
           cache-version: 2
-      - name: Render and Publish
-        uses: quarto-dev/quarto-actions/publish@v2
+      - name: Get data and Render
+        run : |
+          quarto render
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v2
+        
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v1
         with:
-          target: gh-pages
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          path: 'docs/'
+          
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v1
